@@ -11,9 +11,12 @@ It is compatible with the 3D printed parts, but the hardware set up is simplifie
 
 However the following features are (will be) supported
 
-o Power button support
-o Reset button support
-o RFID Cartidge support
-o rsync game library synchronization
+Still to do:
+- Power/Reset button support
+- Safe shutdown
+- Sleep mode and restart
+- Reset button to reset game
+- RFID Cartidge support
+- rsync game library synchronization
 
 I'll update the above list with progress as it goes.
