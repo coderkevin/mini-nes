@@ -9,11 +9,13 @@
 #include "utils/nfc-utils.h"
 
 // Modulations to scan for
-const nfc_modulation nmModulations[2] = {
+const nfc_modulation nmModulations[1] = {
 	{ .nmt = NMT_ISO14443A, .nbr = NBR_106 },
-	{ .nmt = NMT_ISO14443B, .nbr = NBR_106 },
 };
-const size_t szModulations = 5;
+const size_t szModulations = 1;
+
+const uiPollNr = 20;
+const uiPeriod = 2;
 
 static nfc_device *pnd = NULL;
 static nfc_context *context;
@@ -84,6 +86,33 @@ int main( int argc, const char *argv[] )
 
 	if ( verbose ) {
 		printf( "NFC reader: %s opened\n", nfc_device_get_name( pnd ) );
+	}
+
+	if ( ( res = nfc_initiator_poll_target( pnd, nmModulations, szModulations, uiPollNr, uiPeriod, &nt ) ) < 0 ) {
+		nfc_perror( pnd, "nfc_initiator_poll_target" );
+		nfc_close( pnd );
+		nfc_exit( context );
+		exit( EXIT_FAILURE );
+	}
+
+	if ( res > 0 ) {
+		nfc_iso14443a_info *pnai = &nt.nti.nai;
+		char *uid = malloc( pnai->szUidLen );
+		int i;
+
+		if ( verbose ) {
+			printf( "UID size: %d bytes\n", pnai->szUidLen );
+		}
+
+		memcpy( uid, pnai->abtUid, pnai->szUidLen );
+
+		printf( "UID: " );
+		for ( i = 0; i < pnai->szUidLen; i++ ) {
+			printf( "%#04x ", uid[ i ] );
+		}
+		printf( "\n" );
+	} else {
+		printf( "No target found.\n" );
 	}
 
 	nfc_close( pnd );
