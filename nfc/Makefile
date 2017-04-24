@@ -4,7 +4,7 @@
 #   $NFC_HOME should be set to the libnfc-1.7.1 source directory
 #
 
-NFC_INCLUDES = -I$(NFC_HOME)/include
+NFC_INCLUDES = -I$(NFC_HOME) -I$(NFC_HOME)/include
 
 TARGET = nfc_get_uid
 LIBS = -lnfc
