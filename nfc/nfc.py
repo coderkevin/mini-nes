@@ -29,23 +29,22 @@ class nfc_context(Structure):
 
 nfc_context_p = POINTER(nfc_context)
 
-#class nfc_device(Structure):
-    #pass
-    #_fields_ = [("context", POINTER(nfc_context)),
-    #            ("driver", c_void_p),
-    #            ("driver_data", c_void_p),
-    #            ("chip_data", c_void_p),
-    #            ("name", c_char * DEVICE_NAME_LENGTH),
-    #            ("connstring", c_char * NFC_BUFSIZE_CONNSTRING),
-    #            ("bCrc", c_byte),
-    #            ("bPar", c_byte),
-    #            ("bEasyFraming", c_byte),
-    #            ("bInfiniteSelect", c_byte),
-    #            ("bAutoIso14443_4", c_byte),
-    #            ("btSupportByte", c_ubyte),
-    #            ("last_error", c_byte)]
+class nfc_device(Structure):
+    _fields_ = [("context", POINTER(nfc_context)),
+                ("driver", c_void_p),
+                ("driver_data", c_void_p),
+                ("chip_data", c_void_p),
+                ("name", c_char * DEVICE_NAME_LENGTH),
+                ("connstring", c_char * NFC_BUFSIZE_CONNSTRING),
+                ("bCrc", c_byte),
+                ("bPar", c_byte),
+                ("bEasyFraming", c_byte),
+                ("bInfiniteSelect", c_byte),
+                ("bAutoIso14443_4", c_byte),
+                ("btSupportByte", c_ubyte),
+                ("last_error", c_byte)]
 
-#nfc_device_p = POINTER(nfc_device)
+nfc_device_p = POINTER(nfc_device)
 
 class nfc_modulation(Structure):
     _fields_ = [("nmt", c_int),
@@ -61,12 +60,12 @@ class nfc_iso14443a_info(Structure):
 
 class nfc_target_info(Union):
     _fields_ = [("nai", nfc_iso14443a_info)]
-                #("nbi", nfc_iso14443b_info),
-                #("nii", nfc_iso14443bi_info),
-                #("nsi", nfc_iso14443b2sr_info),
-                #("nci", nfc_iso14443b2ct_info),
-                #("nji", nfc_jewel_info),
-                #("ndi", nfc_dep_info)]
+                #("nbi", nfc_iso14443b_info),    # To be added as need in the future
+                #("nii", nfc_iso14443bi_info),   # To be added as need in the future
+                #("nsi", nfc_iso14443b2sr_info), # To be added as need in the future
+                #("nci", nfc_iso14443b2ct_info), # To be added as need in the future
+                #("nji", nfc_jewel_info),        # To be added as need in the future
+                #("ndi", nfc_dep_info)]          # To be added as need in the future
 
 class nfc_target(Structure):
     _fields_ = [("nti", nfc_target_info),
@@ -74,7 +73,7 @@ class nfc_target(Structure):
 
 # Return type declarations
 libnfc.nfc_device_get_name.restype = c_char_p
-#libnfc.nfc_open.restype = nfc_device_p
+libnfc.nfc_open.restype = nfc_device_p
 
 # Functions
 def nfc_open():
