@@ -5,21 +5,21 @@ debug = True
 libnfc = CDLL("libnfc.so")
 
 class nfc_baud_rate:
-    NBR_UNDEFINED = 0
-    NBR_106 = 1
-    NBR_212 = 2
-    NBR_424 = 3
-    NBR_847 = 4
+    NBR_UNDEFINED = c_int(0)
+    NBR_106 = c_int(1)
+    NBR_212 = c_int(2)
+    NBR_424 = c_int(3)
+    NBR_847 = c_int(4)
 
 class nfc_modulation_type:
-    NMT_ISO14443A = 1,
-    NMT_JEWEL = 2
-    NMT_ISO14443B = 3
-    NMT_ISO14443BI = 4 # pre-ISO14443B aka ISO/IEC 14443 B' or Type B'
-    NMT_ISO14443B2SR = 5 # ISO14443-2B ST SRx
-    NMT_ISO14443B2CT = 6 # ISO14443-2B ASK CTx
-    NMT_FELICA = 7
-    NMT_DEP = 8
+    NMT_ISO14443A = c_int(1)
+    NMT_JEWEL = c_int(2)
+    NMT_ISO14443B = c_int(3)
+    NMT_ISO14443BI = c_int(4) # pre-ISO14443B aka ISO/IEC 14443 B' or Type B'
+    NMT_ISO14443B2SR = c_int(5) # ISO14443-2B ST SRx
+    NMT_ISO14443B2CT = c_int(6) # ISO14443-2B ASK CTx
+    NMT_FELICA = c_int(7)
+    NMT_DEP = c_int(8)
 
 DEVICE_NAME_LENGTH = 256
 NFC_BUFSIZE_CONNSTRING = 1024
@@ -53,9 +53,9 @@ class nfc_modulation(Structure):
 class nfc_iso14443a_info(Structure):
     _fields_ = [("abtAtqa", c_ubyte * 2),
                 ("btSak", c_ubyte),
-                ("szUidLen", c_int),
+                ("szUidLen", c_uint),
                 ("abtUid", c_ubyte * 10),
-                ("szAtsLen", c_int),
+                ("szAtsLen", c_uint),
                 ("abtAts", c_ubyte * 254)] # Maximal theoretical ATS is FSD-2, FSD=256 for FSDI=8 in RATS
 
 class nfc_target_info(Union):
@@ -80,18 +80,18 @@ def nfc_open():
     context = nfc_context_p()
     libnfc.nfc_init(pointer(context))
 
-    if (None == context):
+    if None == context:
         print "Error: Unable to init libnfc"
         return None
 
     pnd = None
     pnd = libnfc.nfc_open(context, None)
 
-    if (None == pnd):
+    if None == pnd:
         print "Error: Unable to open NFC device."
         return None
 
-    if (libnfc.nfc_initiator_init(pnd) < 0):
+    if libnfc.nfc_initiator_init(pnd) < 0:
         print "Error: Failed to init NFC device."
         return None
 
@@ -109,7 +109,36 @@ def nfc_close(context, pnd):
         print "NFC reader closed"
 
 
-def nfc_poll( pnd, uiPollNr, uiPeriod ):
+def nfc_poll(context, pnd, uiPollNr, uiPeriod):
     if debug:
-        print "Polling {0} times for {1}ms".format( uiPollNr, (uiPeriod * 150) )
+        print "Polling {0} times for {1}ms".format(uiPollNr, (uiPeriod.value * 150))
+
+    nmModulations = (nfc_modulation * 1)()
+    nmModulations[0].nmt = nfc_modulation_type.NMT_ISO14443A
+    nmModulations[0].nbr = nfc_baud_rate.NBR_106
+
+    szModulations = c_uint(1)
+
+    nt = nfc_target()
+
+    res = libnfc.nfc_initiator_poll_target( pnd, nmModulations, szModulations, uiPollNr, uiPeriod, pointer(nt) )
+
+    if res < 0:
+        print "Error: Unable to poll NFC device."
+        nfc_close(context, pnd)
+        return None
+    elif res > 0:
+        pnai = nt.nti.nai
+        uidLen = pnai.szUidLen # ****** TODO: Fix this value, it's wrong.
+        uid = pnai.abtUid[0:uidLen]
+
+        if debug:
+            print "UID [{0} bytes]: {1}".format(uidLen, uid)
+
+        return uid
+    else:
+        if debug:
+            print "No target found."
+
+        return None
 
