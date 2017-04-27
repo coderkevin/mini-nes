@@ -1,2 +1,3 @@
 nfc/*.o
 nfc/nfc_get_uid
+*.pyc
