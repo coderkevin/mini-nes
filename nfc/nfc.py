@@ -84,7 +84,6 @@ def nfc_open():
         print "Error: Unable to init libnfc"
         return None
 
-    pnd = None
     pnd = libnfc.nfc_open(context, None)
 
     if None == pnd:
@@ -111,7 +110,7 @@ def nfc_close(context, pnd):
 
 def nfc_poll(context, pnd, uiPollNr, uiPeriod):
     if debug:
-        print "Polling {0} times for {1}ms".format(uiPollNr, (uiPeriod.value * 150))
+        print "Polling {0} times for {1}ms".format(uiPollNr, (uiPeriod * 150))
 
     nmModulations = (nfc_modulation * 1)()
     nmModulations[0].nmt = nfc_modulation_type.NMT_ISO14443A
@@ -123,22 +122,17 @@ def nfc_poll(context, pnd, uiPollNr, uiPeriod):
 
     res = libnfc.nfc_initiator_poll_target( pnd, nmModulations, szModulations, uiPollNr, uiPeriod, pointer(nt) )
 
-    if res < 0:
-        print "Error: Unable to poll NFC device."
-        nfc_close(context, pnd)
+    if res <= 0:
+        print "Error: No target found."
         return None
     elif res > 0:
         pnai = nt.nti.nai
         uidLen = pnai.szUidLen # ****** TODO: Fix this value, it's wrong.
-        uid = pnai.abtUid[0:uidLen]
+        uid = pnai.abtUid
+        uidString = ''.join( hex(i) + ' ' for i in uid )
 
         if debug:
-            print "UID [{0} bytes]: {1}".format(uidLen, uid)
+            print "UID [{0} bytes]: {1}".format(uidLen, uidString)
 
         return uid
-    else:
-        if debug:
-            print "No target found."
-
-        return None
 
