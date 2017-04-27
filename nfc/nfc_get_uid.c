@@ -8,6 +8,12 @@
 
 #include "utils/nfc-utils.h"
 
+// Error codes
+#define ERR_INIT      -101
+#define ERR_OPEN      -102
+#define ERR_INITIATOR -103
+#define ERR_POLL      -104
+
 // Modulations to scan for
 const nfc_modulation nmModulations[1] = {
 	{ .nmt = NMT_ISO14443A, .nbr = NBR_106 },
@@ -32,6 +38,60 @@ static void stop_polling( int sig )
 	}
 }
 
+static int open() {
+	signal( SIGINT, stop_polling );
+
+	nfc_init( &context );
+	if ( NULL == context ) {
+		return ERR_INIT;
+	}
+
+	pnd = nfc_open( context, NULL );
+
+	if ( NULL == pnd ) {
+		nfc_exit( context );
+		return ERR_OPEN;
+	}
+
+	if ( nfc_initiator_init( pnd ) < 0 ) {
+		return ERR_INITIATOR;
+		nfc_close( pnd );
+		nfc_exit( context );
+		exit( EXIT_FAILURE );
+	}
+}
+
+static void close() {
+
+	nfc_close( pnd );
+	nfc_exit( context );
+}
+
+static int poll( int uiPollNr, int uiPeriod, char *uid) {
+	int res = 0;
+	nfc_target nt;
+
+	if ( ( res = nfc_initiator_poll_target( pnd, nmModulations, szModulations, uiPollNr, uiPeriod, &nt ) ) < 0 ) {
+		return ERR_POLL;
+	}
+
+	if ( res > 0 ) {
+		nfc_iso14443a_info *pnai = &nt.nti.nai;
+		int i;
+		int charIndex = 0;
+
+		// Print the hex numbers to the uid string.
+		for ( i = 0; i < pnai->szUidLen; i++ ) {
+			sprintf( uid + charIndex, "%02x", pnai->abtUid[ i ] );
+			charIndex += 2;
+		}
+
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 static void print_usage( const char *progname )
 {
 	printf( "usage: %s [-v]\n", progname );
@@ -41,8 +101,6 @@ static void print_usage( const char *progname )
 int main( int argc, const char *argv[] )
 {
 	bool verbose = false;
-
-	signal( SIGINT, stop_polling );
 
 	// Display libnfc version
 	const char *libnfcVersion = nfc_version();
@@ -60,27 +118,11 @@ int main( int argc, const char *argv[] )
 		}
 	}
 
-	nfc_target nt;
+	char uid[20];
 	int res = 0;
 
-	nfc_init( &context );
-	if ( NULL == context ) {
-		ERR( "Unable to init libnfc (malloc)" );
-		exit( EXIT_FAILURE );
-	}
-
-	pnd = nfc_open( context, NULL );
-
-	if ( NULL == pnd ) {
-		ERR( "%s", "Unable to open NFC device." );
-		nfc_exit( context );
-		exit( EXIT_FAILURE );
-	}
-
-	if ( nfc_initiator_init( pnd ) < 0 ) {
-		nfc_perror( pnd, "nfc_initiator_init" );
-		nfc_close( pnd );
-		nfc_exit( context );
+	if ( ( res = open() ) < 0 ) {
+		fprintf( stderr, "NFC init/open failed: %d\n", res );
 		exit( EXIT_FAILURE );
 	}
 
@@ -88,35 +130,15 @@ int main( int argc, const char *argv[] )
 		printf( "NFC reader: %s opened\n", nfc_device_get_name( pnd ) );
 	}
 
-	if ( ( res = nfc_initiator_poll_target( pnd, nmModulations, szModulations, uiPollNr, uiPeriod, &nt ) ) < 0 ) {
-		nfc_perror( pnd, "nfc_initiator_poll_target" );
-		nfc_close( pnd );
-		nfc_exit( context );
-		exit( EXIT_FAILURE );
-	}
-
-	if ( res > 0 ) {
-		nfc_iso14443a_info *pnai = &nt.nti.nai;
-		char *uid = malloc( pnai->szUidLen );
-		int i;
-
-		if ( verbose ) {
-			printf( "UID size: %d bytes\n", pnai->szUidLen );
-		}
-
-		memcpy( uid, pnai->abtUid, pnai->szUidLen );
-
-		printf( "UID: " );
-		for ( i = 0; i < pnai->szUidLen; i++ ) {
-			printf( "%#04x ", uid[ i ] );
-		}
-		printf( "\n" );
+	if ( ( res = poll( uiPollNr, uiPeriod, uid ) ) < 0 ) {
+		fprintf( stderr, "NFC poll failed: %d\n", res );
+	} else if ( res > 0 ) {
+		printf( "UID: %s\n", uid );
 	} else {
-		printf( "No target found.\n" );
+		printf( "No NFC tag found" );
 	}
 
-	nfc_close( pnd );
-	nfc_exit( context );
+	close();
 
 	if ( verbose ) {
 		printf( "NFC reader: %s closed\n", nfc_device_get_name( pnd ) );
