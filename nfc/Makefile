@@ -30,7 +30,7 @@ lib$(NAME).so: lib$(NAME).so.$(VERSION)
 	ln -s lib$(NAME).so.$(MAJOR) lib$(NAME).so
 
 lib$(NAME).so.$(VERSION): $(NAME).o
-	$(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
+	$(CC) -fPIC -O3 -shared -lnfc -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
