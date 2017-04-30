@@ -3,87 +3,94 @@
 from ctypes import *
 import time
 import signal
+import pwd
+import grp
 import daemon
 import lockfile
 import logging
 
-libnfc = CDLL("libnfc.so")
-libnfcutils = CDLL("libnfcutils.so")
-
 logLevel = logging.DEBUG
-interval = 5 # seconds
-uiPollNr = 1 # number of times to poll each interval
-uiPeriod = 1 # nfc polling periods each interval
 
-def nfc_open():
-    res = libnfcutils.nfcutils_open()
+class App():
+    def __init__(self):
+        self.libnfc = CDLL("libnfc.so")
+        self.libnfcutils = CDLL("libnfcutils.so")
 
-    if res < 0:
-        raise OSError( "Error: Unable to open NFC device: {0}".format( res ) )
-    else:
-        logging.info( "NFC Device Open" )
+        self.interval = 5 # seconds
+        self.uiPollNr = 1 # number of times to poll each interval
+        self.uiPeriod = 1 # nfc polling periods each interval
 
-def nfc_close():
-    res = libnfcutils.nfcutils_close()
+    def run(self):
+        logging.debug( "App.run" )
+        nfc_open()
 
-def nfc_poll( uiPollNr, uiPeriod ):
-    charArray20 = c_char * 20
-    uidString = charArray20()
+        logging.debug( "Entering main loop" )
 
-    res = libnfcutils.nfcutils_poll( uiPollNr, uiPeriod, uidString )
+        while True:
+            uid = nfc_poll( uiPollNr, uiPeriod )
 
-    if res < 0:
-        # On my chipset, it returns a -90 Internal Chip Error when the tag is
-        # not present. This sucks as it sounds like a valid error code, but
-        # we have to ignore that error as it's a normal condition.
-        logging.warning( "Warning: nfc poll: {0}".format( res ) )
-        return None
-    elif res == 0:
-        logging.debug( "No NFC tag found" )
-        return None
-    elif res == 1:
-        logging.debug( "NFC tag found: {0}".format( uidString.value ) )
-        return uidString.value
+            if uid:
+                logging.info( "Found NFC tag: {0}".format( uid ) )
 
-def program_setup():
-    logging.debug( "program_setup" )
+            time.sleep( self.interval )
 
-    nfc_open()
+    def cleanup(self):
+        logging.debug( "cleanup" )
+        nfc_close()
 
-def program_main():
-    logging.debug( "program_main" )
 
-    while True:
-        uid = nfc_poll( uiPollNr, uiPeriod )
+    def nfc_open():
+        res = self.libnfcutils.nfcutils_open()
 
-        if uid:
-            logging.info( "Found NFC tag: {0}".format( uid ) )
+        if res < 0:
+            raise OSError( "Error: Unable to open NFC device: {0}".format( res ) )
+        else:
+            logging.info( "NFC Device Open" )
 
-        time.sleep( interval )
+    def nfc_close():
+        res = self.libnfcutils.nfcutils_close()
 
-def program_cleanup():
-    logging.debug( "program_cleanup" )
+    def nfc_poll( uiPollNr, uiPeriod ):
+        charArray20 = c_char * 20
+        uidString = charArray20()
 
-    nfc_close()
+        res = self.libnfcutils.nfcutils_poll( uiPollNr, uiPeriod, uidString )
 
-def program_reload_config():
-    logging.debug( "program_reload_config" )
+        if res < 0:
+            # On my chipset, it returns a -90 Internal Chip Error when the tag is
+            # not present. This sucks as it sounds like a valid error code, but
+            # we have to ignore that error as it's a normal condition.
+            logging.warning( "Warning: nfc poll: {0}".format( res ) )
+            return None
+        elif res == 0:
+            logging.debug( "No NFC tag found" )
+            return None
+        elif res == 1:
+            logging.debug( "NFC tag found: {0}".format( uidString.value ) )
+            return uidString.value
 
-context = daemon.DaemonContext(
-        working_directory='/var/lib/nfc_poll',
-        umask=0o002,
-        pidfile=lockfile.FileLock( '/var/run/nfc_poll.pid' ),
-    )
 
-context.signal_map = {
-        signal.SIGTERM: program_cleanup,
-        signal.SIGHUP: program_reload_config,
+##### Main Startup #####
+app = App()
+logger = logging.getLogger( "nfc_poll_log" )
+logger.setLevel( logLevel )
+logFormatter = logging.Formatter( "%(asctime)s - %(name)s - %(levelname)s - %(message)s" )
+logHandler = logging.FileHandler( "/var/log/nfc_poll.log" )
+logHandler.setFormatter( logFormatter )
+logger.addHandler( logHandler )
+
+daemonRunner = daemon.runner.DaemonRunner( app )
+
+with daemonRunner.daemon_context:
+    files_preserve = [ logHandler.stream ]
+    working_directory = '/var/lib/nfc_poll'
+    gid = grp.getgrnam( 'nes' ).gr_gid
+    uid = pwd.getpwnam( 'nes' ).pw_uid
+    umask = 0o002
+    pidfile = lockfile.FileLock( '/var/run/nfc_poll.pid' ),
+    signal_map = {
+        signal.SIGTERM: app.cleanup,
     }
 
-logging.basicConfig( filename='/var/log/nfc_poll.log', filemode='w', level=logLevel )
-
-program_setup()
-
-with context:
-    program_main()
+daemonRunner.do_action()
 
