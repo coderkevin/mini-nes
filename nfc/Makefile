@@ -10,7 +10,7 @@ TARGET = nfc_get_uid
 LIBS = -lnfc
 CC = gcc
 CFLAGS = $(NFC_INCLUDES)
-OBJECTS = nfc_get_uid.o
+OBJECTS = nfcutils.o nfc_get_uid.o
 
 .PHONY: default all clean
 
