@@ -4,28 +4,49 @@
 #   $NFC_HOME should be set to the libnfc-1.7.1 source directory
 #
 
-NFC_INCLUDES = -I$(NFC_HOME) -I$(NFC_HOME)/include
+NFC_INCLUDES := -I$(NFC_HOME) -I$(NFC_HOME)/include
 
-TARGET = nfc_get_uid
-LIBS = -lnfc
-CC = gcc
-CFLAGS = $(NFC_INCLUDES)
-OBJECTS = nfcutils.o nfc_get_uid.o
+TEST := nfc_get_uid
+CC := gcc
+CFLAGS := $(NFC_INCLUDES) -fPIC -O3 -g -Wall -Werror
+TEST_OBJECTS := nfc_get_uid.o
 
-.PHONY: default all clean
+MAJOR := 0
+MINOR := 1
+NAME := nfcutils
+VERSION := $(MAJOR).$(MINOR)
 
-default: $(TARGET)
+INSTALL_PREFIX := /usr
+
+.PHONY: default all clean lib install
+
+default: $(TEST) lib
 all: default
+
+lib: lib$(NAME).so
+
+lib$(NAME).so: lib$(NAME).so.$(VERSION)
+	ldconfig -v -n .
+	ln -s lib$(NAME).so.$(MAJOR) lib$(NAME).so
+
+lib$(NAME).so.$(VERSION): $(NAME).o
+	$(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-.PRECIOUS: $(TARGET) $(OBJECTS)
+.PRECIOUS: $(TEST) $(TEST_OBJECTS)
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+$(TEST): $(TEST_OBJECTS) lib$(NAME).so
+	$(CC) $(TEST_OBJECTS) -o $@ -L. -l$(NAME) -lnfc
+
+test: $(TEST)
+	LD_LIBRARY_PATH=. ./$(TEST) -v
+
+install: lib
+	install -m 0755 *.so* $(INSTALL_PREFIX)/lib
 
 clean:
-	-rm -f $(OBJECTS)
+	-rm -f *.o *.so*
 	-rm -f nfc_get_uid
 

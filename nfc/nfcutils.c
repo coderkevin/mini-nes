@@ -20,9 +20,6 @@ const nfc_modulation nmModulations[1] = {
 };
 const size_t szModulations = 1;
 
-const uiPollNr = 20;
-const uiPeriod = 2;
-
 static nfc_device *pnd = NULL;
 static nfc_context *context;
 
