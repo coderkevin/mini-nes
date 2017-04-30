@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+# nfc_poll     Startup script for nfc_poll_daemon
+#
+# config: /etc/nfc_poll/nfc_poll.conf
+# pidfile: /var/run/nfc_poll.pid
+# logfile: /var/log/nfc_poll.log
+#
+### BEGIN INIT INFO
+# Provides: nfc_poll_daemon
+# Required-Start: udev mountkernfs $local_fs
+# Required-Stop: $local_fs
+# Default-Start: S
+# Default-Stop:
+# Short-Description: start and stop nfc_poll server
+# Description: nfc_poll checks the nfc device for tags periodically, then acts on them.
+### END INIT INFO
+
+# Source function library.
+. /lib/lsb/init-functions
+
+nfc_poll_daemon=/var/lib/nfc_poll/nfc_poll_daemon.py
+prog=nfc_poll_daemon
+pidfile=/var/run/nfc_poll.pid
+logfile=/var/log/nfc_poll.log
+RETVAL=0
+
+NFC_POLL_OPTS="-p $pidfile -l $logfile"
+
+RUNASUSER=nes
+
+case "$1" in
+	start)
+		log_daemon_msg "Starting $prog: "
+		if start-stop-daemon --start --quiet --oknodo --pidfile $pidfile --exec $nfc_poll_daemon -- $NFC_POLL_OPTS ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+		;;
+	stop)
+		log_daemon_msg "Stopping $prog: "
+		if start-stop-daemon --stop --quiet --oknodo --pidfile $pidfile ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+		;;
+	status)
+		status_of_proc -p $pidfile $nfc_poll_daemon $prog && exit 0 || exit $?
+		;;
+	restart)
+		log_daemon_msg "Restarting $prog: "
+		stop-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $pidfile
+		if start-stop-daemon --start --quiet --oknodo --pidfile $pidfile --exec $nfc_poll_daemon -- $NFC_POLL_OPTS ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+		;;
+	force-reload|reload)
+		reload
+		;;
+	*)
+		log_action_msg "Usage: $prog {start|stop|restart|force-reload|reload|status}"
+		exit 1
+esac
+

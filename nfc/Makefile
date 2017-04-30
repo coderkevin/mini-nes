@@ -17,6 +17,8 @@ NAME := nfcutils
 VERSION := $(MAJOR).$(MINOR)
 
 INSTALL_PREFIX := /usr
+VAR_WORK_DIR := /var/lib/nfc_poll
+INIT_DIR := /etc/init.d
 
 .PHONY: default all clean lib install
 
@@ -44,7 +46,12 @@ test: $(TEST)
 	LD_LIBRARY_PATH=. ./$(TEST) -v
 
 install: lib
+	-useradd nes
+	-pip install python-daemon
 	install -m 0755 *.so* $(INSTALL_PREFIX)/lib
+	install -m 0755 nfc_poll.py $(VAR_WORK_DIR)
+	install -m 0755 nfc_poll_daemon.py $(VAR_WORK_DIR)
+	install -m 0755 init/nfc_poll $(INIT_DIR)
 
 clean:
 	-rm -f *.o *.so*

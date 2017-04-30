@@ -1,96 +1,91 @@
-#!/usr/bin/pyton2.7
+#!/usr/bin/env python2.7
 
 from ctypes import *
+import sys
 import time
-import signal
-import pwd
-import grp
-import daemon
-import lockfile
 import logging
 
 logLevel = logging.DEBUG
+logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
-class App():
-    def __init__(self):
-        self.libnfc = CDLL("libnfc.so")
-        self.libnfcutils = CDLL("libnfcutils.so")
+class NFCPoll():
+    def __init__( self, logFile = None ):
 
         self.interval = 5 # seconds
         self.uiPollNr = 1 # number of times to poll each interval
         self.uiPeriod = 1 # nfc polling periods each interval
 
-    def run(self):
-        logging.debug( "App.run" )
-        nfc_open()
+        self.initLogger( logFile )
 
-        logging.debug( "Entering main loop" )
+        self.libnfc = CDLL("libnfc.so")
+        self.libnfcutils = CDLL("libnfcutils.so")
+
+    def initLogger( self, logFile = None ):
+        self.logger = logging.getLogger( 'NFCPoll' )
+        self.logger.setLevel( logLevel )
+
+        logHandler = None
+
+        if logFile:
+            logHandler = logging.FileHandler( logFile )
+        else:
+            logHandler = logging.StreamHandler( sys.stdout )
+
+        logHandler.setLevel( logLevel )
+        logHandler.setFormatter( logging.Formatter( logFormat ) )
+        self.logger.addHandler( logHandler )
+
+    def run( self ):
+        self.logger.debug( "NFCPoll.run" )
+        self.nfc_open()
+
+        self.logger.debug( "Entering main loop" )
 
         while True:
-            uid = nfc_poll( uiPollNr, uiPeriod )
+            uid = self.nfc_poll( self.uiPollNr, self.uiPeriod )
 
             if uid:
-                logging.info( "Found NFC tag: {0}".format( uid ) )
+                # TODO: Do something here!
+                pass
 
             time.sleep( self.interval )
 
-    def cleanup(self):
-        logging.debug( "cleanup" )
-        nfc_close()
+    def cleanup( self ):
+        self.logger.debug( "cleanup" )
+        self.nfc_close()
 
 
-    def nfc_open():
+    def nfc_open( self ):
         res = self.libnfcutils.nfcutils_open()
 
         if res < 0:
             raise OSError( "Error: Unable to open NFC device: {0}".format( res ) )
         else:
-            logging.info( "NFC Device Open" )
+            self.logger.info( "NFC Device Open" )
 
-    def nfc_close():
+    def nfc_close( self ):
         res = self.libnfcutils.nfcutils_close()
 
-    def nfc_poll( uiPollNr, uiPeriod ):
+    def nfc_poll( self, uiPollNr, uiPeriod ):
         charArray20 = c_char * 20
         uidString = charArray20()
 
         res = self.libnfcutils.nfcutils_poll( uiPollNr, uiPeriod, uidString )
 
         if res < 0:
-            # On my chipset, it returns a -90 Internal Chip Error when the tag is
+            # (KK) On my chipset, it returns a -90 Internal Chip Error when the tag is
             # not present. This sucks as it sounds like a valid error code, but
             # we have to ignore that error as it's a normal condition.
-            logging.warning( "Warning: nfc poll: {0}".format( res ) )
+            self.logger.info( "Warning: nfc poll: {0}".format( res ) )
             return None
         elif res == 0:
-            logging.debug( "No NFC tag found" )
+            self.logger.debug( "No NFC tag found" )
             return None
         elif res == 1:
-            logging.debug( "NFC tag found: {0}".format( uidString.value ) )
+            self.logger.debug( "NFC tag found: {0}".format( uidString.value ) )
             return uidString.value
 
-
-##### Main Startup #####
-app = App()
-logger = logging.getLogger( "nfc_poll_log" )
-logger.setLevel( logLevel )
-logFormatter = logging.Formatter( "%(asctime)s - %(name)s - %(levelname)s - %(message)s" )
-logHandler = logging.FileHandler( "/var/log/nfc_poll.log" )
-logHandler.setFormatter( logFormatter )
-logger.addHandler( logHandler )
-
-daemonRunner = daemon.runner.DaemonRunner( app )
-
-with daemonRunner.daemon_context:
-    files_preserve = [ logHandler.stream ]
-    working_directory = '/var/lib/nfc_poll'
-    gid = grp.getgrnam( 'nes' ).gr_gid
-    uid = pwd.getpwnam( 'nes' ).pw_uid
-    umask = 0o002
-    pidfile = lockfile.FileLock( '/var/run/nfc_poll.pid' ),
-    signal_map = {
-        signal.SIGTERM: app.cleanup,
-    }
-
-daemonRunner.do_action()
+if __name__ == "__main__":
+    app = NFCPoll()
+    app.run()
 
