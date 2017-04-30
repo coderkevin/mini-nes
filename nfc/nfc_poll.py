@@ -1,17 +1,18 @@
-from ctypes import *
-from time import sleep
-import signal
+#!/usr/bin/pyton2.7
 
-debug = True
+from ctypes import *
+import time
+import signal
+import daemon
+import lockfile
 
 libnfc = CDLL("libnfc.so")
 libnfcutils = CDLL("libnfcutils.so")
 
-interrupted = False
-
-def sigint_handler( signal, frame ):
-    print( "SIGINT" )
-    interrupted = True
+debug = True
+interval = 5 # seconds
+uiPollNr = 1 # number of times to poll each interval
+uiPeriod = 1 # nfc polling periods each interval
 
 def nfc_open():
     res = libnfcutils.nfcutils_open()
@@ -21,7 +22,6 @@ def nfc_open():
     else:
         if debug:
             print "NFC Device Open"
-
 
 def nfc_close():
     res = libnfcutils.nfcutils_close()
@@ -46,18 +46,47 @@ def nfc_poll( uiPollNr, uiPeriod ):
         print "NFC tag found: {0}".format( uidString.value )
         return uidString.value
 
-def nfc_poll_continuous( interval, callback ):
-    signal.signal( signal.SIGINT, sigint_handler )
+def program_setup():
+    if debug:
+        print "program_setup"
 
-    # TODO: Set shutdown criteria, maybe catch SIGINT and return?
+    nfc_open()
+
+def program_main():
+    if debug:
+        print "program_main"
+
     while True:
-        uid = nfc_poll( 1, 1 )
+        uid = nfc_poll( uiPollNr, uiPeriod )
 
         if uid:
             if debug:
                 print "Found NFC tag: {0}".format( uid )
-            callback( uid )
 
-        signal.alarm( interval )
-        signal.pause()
+        time.sleep( interval )
+
+def program_cleanup():
+    if debug:
+        print "program_cleanup"
+
+    nfc_close()
+
+def program_reload_config():
+    print "Reload config"
+
+context = daemon.DaemonContext(
+        working_directory='/var/lib/nfc_poll',
+        umask=0o002,
+        pidfile=lockfile.FileLock( '/var/run/nfc_poll.pid' ),
+    )
+
+context.signal_map = {
+        signal.SIGTERM: program_cleanup,
+        signal.SIGHUP: program_reload_config,
+    }
+
+program_setup()
+
+with context:
+    program_main()
 
