@@ -1,10 +1,17 @@
 from ctypes import *
 from time import sleep
+import signal
 
 debug = True
 
 libnfc = CDLL("libnfc.so")
 libnfcutils = CDLL("libnfcutils.so")
+
+interrupted = False
+
+def sigint_handler( signal, frame ):
+    print( "SIGINT" )
+    interrupted = True
 
 def nfc_open():
     res = libnfcutils.nfcutils_open()
@@ -40,6 +47,7 @@ def nfc_poll( uiPollNr, uiPeriod ):
         return uidString.value
 
 def nfc_poll_continuous( interval, callback ):
+    signal.signal( signal.SIGINT, sigint_handler )
 
     # TODO: Set shutdown criteria, maybe catch SIGINT and return?
     while True:
@@ -50,5 +58,6 @@ def nfc_poll_continuous( interval, callback ):
                 print "Found NFC tag: {0}".format( uid )
             callback( uid )
 
-        sleep( interval )
+        signal.alarm( interval )
+        signal.pause()
 
