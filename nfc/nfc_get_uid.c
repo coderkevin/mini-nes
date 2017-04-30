@@ -43,7 +43,7 @@ int main( int argc, const char *argv[] )
 	char uid[20];
 	int res = 0;
 
-	if ( ( res = open() ) < 0 ) {
+	if ( ( res = nfcutils_open() ) < 0 ) {
 		fprintf( stderr, "NFC init/open failed: %d\n", res );
 		exit( EXIT_FAILURE );
 	}
@@ -52,7 +52,7 @@ int main( int argc, const char *argv[] )
 		printf( "NFC device opened\n" );
 	}
 
-	if ( ( res = poll( uiPollNr, uiPeriod, uid ) ) < 0 ) {
+	if ( ( res = nfcutils_poll( uiPollNr, uiPeriod, uid ) ) < 0 ) {
 		fprintf( stderr, "NFC poll failed: %d\n", res );
 	} else if ( res > 0 ) {
 		printf( "UID: %s\n", uid );
@@ -60,7 +60,7 @@ int main( int argc, const char *argv[] )
 		printf( "No NFC tag found" );
 	}
 
-	close();
+	nfcutils_close();
 
 	if ( verbose ) {
 		printf( "NFC device closed\n" );

@@ -26,7 +26,7 @@ const uiPeriod = 2;
 static nfc_device *pnd = NULL;
 static nfc_context *context;
 
-static void stop_polling( int sig )
+void stop_polling( int sig )
 {
 	(void) sig;
 
@@ -38,7 +38,7 @@ static void stop_polling( int sig )
 	}
 }
 
-static int open() {
+int nfcutils_open() {
 	signal( SIGINT, stop_polling );
 
 	nfc_init( &context );
@@ -54,22 +54,21 @@ static int open() {
 	}
 
 	if ( nfc_initiator_init( pnd ) < 0 ) {
-		return ERR_INITIATOR;
 		nfc_close( pnd );
 		nfc_exit( context );
-		exit( EXIT_FAILURE );
+		return ERR_INITIATOR;
 	}
 
 	return 0;
 }
 
-static void close() {
+void nfcutils_close() {
 
 	nfc_close( pnd );
 	nfc_exit( context );
 }
 
-static int poll( int uiPollNr, int uiPeriod, char *uid) {
+int nfcutils_poll( int uiPollNr, int uiPeriod, char *uid) {
 	int res = 0;
 	nfc_target nt;
 
