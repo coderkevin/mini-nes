@@ -4,36 +4,23 @@ from ctypes import *
 import sys
 import time
 import logging
+import ConfigParser
+import traceback
 
 logLevel = logging.DEBUG
 logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
+configDir = '/etc/nfc_poll/'
+defaultConfigFile = configDir + 'nfc_poll.conf'
+
 class NFCPoll():
-    def __init__( self, logFile = None ):
+    def __init__( self, options, logger ):
 
-        self.interval = 5 # seconds
-        self.uiPollNr = 1 # number of times to poll each interval
-        self.uiPeriod = 1 # nfc polling periods each interval
-
-        self.initLogger( logFile )
+        self.options = options
+        self.logger = logger
 
         self.libnfc = CDLL("libnfc.so")
         self.libnfcutils = CDLL("libnfcutils.so")
-
-    def initLogger( self, logFile = None ):
-        self.logger = logging.getLogger( 'NFCPoll' )
-        self.logger.setLevel( logLevel )
-
-        logHandler = None
-
-        if logFile:
-            logHandler = logging.FileHandler( logFile )
-        else:
-            logHandler = logging.StreamHandler( sys.stdout )
-
-        logHandler.setLevel( logLevel )
-        logHandler.setFormatter( logging.Formatter( logFormat ) )
-        self.logger.addHandler( logHandler )
 
     def run( self ):
         self.logger.debug( "NFCPoll.run" )
@@ -42,13 +29,13 @@ class NFCPoll():
         self.logger.debug( "Entering main loop" )
 
         while True:
-            uid = self.nfc_poll( self.uiPollNr, self.uiPeriod )
+            uid = self.nfc_poll( self.options['uiPollNr'], self.options['uiPeriod'] )
 
             if uid:
                 # TODO: Do something here!
                 pass
 
-            time.sleep( self.interval )
+            time.sleep( self.options['interval'] )
 
     def cleanup( self ):
         self.logger.debug( "cleanup" )
@@ -85,7 +72,43 @@ class NFCPoll():
             self.logger.debug( "NFC tag found: {0}".format( uidString.value ) )
             return uidString.value
 
+
+def initLogger( logFile = None ):
+    logger = logging.getLogger( 'NFCPoll' )
+    logger.setLevel( logLevel )
+
+    logHandler = None
+
+    if logFile:
+        logHandler = logging.FileHandler( logFile )
+    else:
+        logHandler = logging.StreamHandler( sys.stdout )
+
+    logHandler.setLevel( logLevel )
+    logHandler.setFormatter( logging.Formatter( logFormat ) )
+    logger.addHandler( logHandler )
+
+    return logger
+
+def initConfig( configFile = defaultConfigFile ):
+    config = ConfigParser.RawConfigParser()
+    config.read( configFile )
+
+    return {
+        'interval': config.getint( 'Settings', 'interval_seconds' ),
+        'uiPollNr': config.getint( 'Settings', 'ui_poll_nr' ),
+        'uiPeriod': config.getint( 'Settings', 'ui_period' )
+    }
+
 if __name__ == "__main__":
-    app = NFCPoll()
-    app.run()
+    logger = initLogger()
+
+    try:
+        options = initConfig()
+
+        app = NFCPoll( options, logger )
+        app.run()
+    except:
+        logger.error( traceback.format_exc() )
+        sys.exit(1)
 

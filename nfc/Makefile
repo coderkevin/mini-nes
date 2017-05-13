@@ -19,6 +19,7 @@ VERSION := $(MAJOR).$(MINOR)
 INSTALL_PREFIX := /usr
 VAR_WORK_DIR := /var/lib/nfc_poll
 INIT_DIR := /etc/init.d
+CONFIG_DIR := /etc/nfc_poll
 
 .PHONY: default all clean lib install
 
@@ -52,6 +53,7 @@ install: lib
 	install -m 0755 nfc_poll.py $(VAR_WORK_DIR)
 	install -m 0755 nfc_poll_daemon.py $(VAR_WORK_DIR)
 	install -m 0755 init/nfc_poll $(INIT_DIR)
+	install -m 0644 etc/*.conf -D -t $(CONFIG_DIR)
 
 clean:
 	-rm -f *.o *.so*
