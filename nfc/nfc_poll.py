@@ -27,6 +27,7 @@ class NFCPoll():
         self.nfc_open()
 
         self.logger.debug( "Entering main loop" )
+        self.logger.info( "cartridges={}".format( self.options['cartridges'] ) )
 
         while True:
             uid = self.nfc_poll( self.options['uiPollNr'], self.options['uiPeriod'] )
@@ -90,21 +91,28 @@ def initLogger( logFile = None ):
 
     return logger
 
-def initConfig( configFile = defaultConfigFile ):
+def initConfig( logger, configFile = defaultConfigFile ):
     config = ConfigParser.RawConfigParser()
     config.read( configFile )
+
+    cartridgeIds = config.options( 'Cartridges' )
+    cartridges = {}
+
+    for uid in cartridgeIds:
+        cartridges[ uid ] = config.get( 'Cartridges', uid )
 
     return {
         'interval': config.getint( 'Settings', 'interval_seconds' ),
         'uiPollNr': config.getint( 'Settings', 'ui_poll_nr' ),
-        'uiPeriod': config.getint( 'Settings', 'ui_period' )
+        'uiPeriod': config.getint( 'Settings', 'ui_period' ),
+        'cartridges': cartridges
     }
 
 if __name__ == "__main__":
     logger = initLogger()
 
     try:
-        options = initConfig()
+        options = initConfig( logger )
 
         app = NFCPoll( options, logger )
         app.run()

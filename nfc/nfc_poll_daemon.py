@@ -31,7 +31,7 @@ def start_daemon( pidf, logf ):
             logger.debug( "nfc_poll_daemon: entered daemon context" )
 
             try:
-                options = nfc_poll.initConfig()
+                options = nfc_poll.initConfig( logger )
                 logger.debug( "nfc_poll_daemon: options: {}".format( options ) )
 
                 app = nfc_poll.NFCPoll( options, logger )
