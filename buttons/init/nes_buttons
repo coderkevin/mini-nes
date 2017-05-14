@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+# nes_buttons     Startup script for nes_buttons_daemon
+#
+# config: /etc/nes_buttons/nes_buttons.conf
+# pidfile: /var/run/nes_buttons.pid
+# logfile: /var/log/nes_buttons.log
+#
+### BEGIN INIT INFO
+# Provides: nes_buttons_daemon
+# Required-Start: udev mountkernfs $local_fs
+# Required-Stop: $local_fs
+# Default-Start: S
+# Default-Stop:
+# Short-Description: start and stop nes_buttons server
+# Description: nes_buttons manages the power/reset buttons.
+### END INIT INFO
+
+# Source function library.
+. /lib/lsb/init-functions
+
+nes_buttons_daemon=/var/lib/nes_buttons/nes_buttons_daemon.py
+prog=nes_buttons_daemon
+pidfile=/var/run/nes_buttons.pid
+logfile=/var/log/nes_buttons.log
+RETVAL=0
+
+NES_BUTTONS_OPTS="-p $pidfile -l $logfile"
+
+RUNASUSER=nes
+
+case "$1" in
+	start)
+		log_daemon_msg "Starting $prog: "
+		if start-stop-daemon --start --quiet --oknodo --pidfile $pidfile --exec $nes_buttons_daemon -- $NES_BUTTONS_OPTS ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+		;;
+	stop)
+		log_daemon_msg "Stopping $prog: "
+		if start-stop-daemon --stop --quiet --oknodo --pidfile $pidfile ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+		;;
+	status)
+		status_of_proc -p $pidfile $nes_buttons_daemon $prog && exit 0 || exit $?
+		;;
+	restart)
+		log_daemon_msg "Restarting $prog: "
+		stop-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $pidfile
+		if start-stop-daemon --start --quiet --oknodo --pidfile $pidfile --exec $nes_buttons_daemon -- $NES_BUTTONS_OPTS ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+		;;
+	force-reload|reload)
+		reload
+		;;
+	*)
+		log_action_msg "Usage: $prog {start|stop|restart|force-reload|reload|status}"
+		exit 1
+esac
+
