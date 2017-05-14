@@ -28,21 +28,16 @@ class NESButtons():
             RESET_SENSE_PIN,
             GPIO.RISING,
             callback=self.resetPressed,
-            bouncetime=300
+            bouncetime=500
             )
 
-        GPIO.add_event_detect(
-            POWER_SENSE_PIN,
-            GPIO.FALLING,
-            callback=self.powerReleased,
-            bouncetime=300
-            )
+    def run( self ):
+        GPIO.wait_for_edge( POWER_SENSE_PIN, GPIO.FALLING )
+        print( "Power down!" )
+        GPIO.cleanup()
 
-    def resetPressed( self ):
+    def resetPressed( self, channel ):
         print "Reset!"
-
-    def powerReleased( self ):
-        print "Power Released!"
 
 
 if __name__ == "__main__":
@@ -53,6 +48,7 @@ if __name__ == "__main__":
 
     try:
         app = NESButtons( logger )
+        app.run()
     except:
         logger.error( traceback.format_exc() )
         sys.exit(1)
