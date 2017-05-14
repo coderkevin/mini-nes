@@ -2,7 +2,7 @@ import sys
 import logging
 
 def initLogger( logLevel, logFormat, logFile = None ):
-    logger = logging.getLogger( 'NFCPoll' )
+    logger = logging.getLogger( 'NESButtons' )
     logger.setLevel( logLevel )
 
     logHandler = None
