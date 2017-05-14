@@ -29,8 +29,8 @@ class NFCPoll():
         self.logger.debug( "NFCPoll.run" )
         self.nfc_open()
 
-        self.logger.debug( "Entering main loop" )
-        self.logger.info( "cartridges={}".format( self.options['cartridges'] ) )
+        self.logger.info( "Entering main loop" )
+        self.logger.debug( "cartridges={}".format( self.options['cartridges'] ) )
 
         while True:
             uid = self.nfc_poll( self.options['uiPollNr'], self.options['uiPeriod'] )
@@ -75,10 +75,10 @@ class NFCPoll():
         res = self.libnfcutils.nfcutils_poll( uiPollNr, uiPeriod, uidString )
 
         if res < 0:
-            # (KK) On my chipset, it returns a -90 Internal Chip Error when the tag is
+            # (KK) On my chipset, it returns a -104 Internal Chip Error when the tag is
             # not present. This sucks as it sounds like a valid error code, but
             # we have to ignore that error as it's a normal condition.
-            self.logger.info( "Warning: nfc poll: {0}".format( res ) )
+            self.logger.debug( "Warning: nfc poll: {0}".format( res ) )
             return None
         elif res == 0:
             self.logger.debug( "No NFC tag found" )

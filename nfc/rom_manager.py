@@ -58,7 +58,7 @@ class RomManager():
                 ROMS_PATH,
                 rom
                 )
-            self.logger.info( 'Running emulator command: {}'.format( emulatorCmd ) )
+            self.logger.debug( 'Running emulator command: {}'.format( emulatorCmd ) )
             subprocess.call( "sudo openvt -c 1 -s -f {} &".format( emulatorCmd ), shell=True );
 
 if __name__ == "__main__":
