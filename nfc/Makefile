@@ -50,8 +50,7 @@ install: lib
 	-useradd nes
 	-pip install python-daemon
 	install -m 0755 *.so* $(INSTALL_PREFIX)/lib
-	install -m 0755 nfc_poll.py $(VAR_WORK_DIR)
-	install -m 0755 nfc_poll_daemon.py $(VAR_WORK_DIR)
+	install -m 0755 *.py $(VAR_WORK_DIR)
 	install -m 0755 init/nfc_poll $(INIT_DIR)
 	install -m 0644 etc/*.conf -D -t $(CONFIG_DIR)
 

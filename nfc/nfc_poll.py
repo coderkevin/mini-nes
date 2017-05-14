@@ -3,15 +3,14 @@
 from ctypes import *
 import sys
 import time
-import logging
 import psutil
 import subprocess
 import ConfigParser
 import traceback
+import log
+import logging
 import rom_manager
 
-logLevel = logging.DEBUG
-logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 configDir = '/etc/nfc_poll/'
 defaultConfigFile = configDir + 'nfc_poll.conf'
@@ -21,7 +20,7 @@ class NFCPoll():
 
         self.options = options
         self.logger = logger
-        self.rom = rom_manager.RomManager()
+        self.rom = rom_manager.RomManager( logger )
 
         self.libnfc = CDLL("libnfc.so")
         self.libnfcutils = CDLL("libnfcutils.so")
@@ -35,12 +34,15 @@ class NFCPoll():
 
         while True:
             uid = self.nfc_poll( self.options['uiPollNr'], self.options['uiPeriod'] )
+            rom = None
 
             if uid:
-                gameFilePath = self.lookupCartridge( uid )
-                if gameFilePath:
-                    self.logger.info( "Read cartridge for {}".format( gameFilePath ) )
-                    self.rom.load( gameFilePath )
+                rom = self.lookupCartridge( uid )
+
+            if rom:
+                self.rom.load( rom )
+            else:
+                self.rom.clear()
 
             time.sleep( self.options['interval'] )
 
@@ -85,23 +87,6 @@ class NFCPoll():
             self.logger.debug( "NFC tag found: {0}".format( uidString.value ) )
             return uidString.value
 
-def initLogger( logFile = None ):
-    logger = logging.getLogger( 'NFCPoll' )
-    logger.setLevel( logLevel )
-
-    logHandler = None
-
-    if logFile:
-        logHandler = logging.FileHandler( logFile )
-    else:
-        logHandler = logging.StreamHandler( sys.stdout )
-
-    logHandler.setLevel( logLevel )
-    logHandler.setFormatter( logging.Formatter( logFormat ) )
-    logger.addHandler( logHandler )
-
-    return logger
-
 def initConfig( logger, configFile = defaultConfigFile ):
     config = ConfigParser.RawConfigParser()
     config.read( configFile )
@@ -120,7 +105,10 @@ def initConfig( logger, configFile = defaultConfigFile ):
     }
 
 if __name__ == "__main__":
-    logger = initLogger()
+    logLevel = logging.DEBUG
+    logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+    logger = log.initLogger( logLevel, logFormat )
 
     try:
         options = initConfig( logger )

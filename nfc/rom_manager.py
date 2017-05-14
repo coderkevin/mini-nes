@@ -1,7 +1,10 @@
 #!/usr/bin/env python2.7
 
+import sys
 import psutil
 import subprocess
+import log
+import logging
 
 ROMS_PATH = "/home/pi/RetroPie/roms/"
 EMULATOR_PATH = "/opt/retropie/supplementary/runcommand/runcommand.sh"
@@ -10,6 +13,7 @@ EMULATOR_OPTS = "0 _SYS_"
 class RomManager():
     def __init__( self, logger ):
         self.logger = logger
+        self.rom = None
 
     def killProcs( self, procNames ):
         for proc in psutil.process_iter():
@@ -32,18 +36,42 @@ class RomManager():
         ]
         self.killProcs( procNames )
 
-    def load( self, romFile ):
-        self.logger.info( 'load rom: {}'.format( romFile ) )
+    def clear( self ):
+        if self.rom:
+            self.logger.info( "Clearing rom for default operation" )
+            self.rom = None
+            self.killEmulatorProcs()
+            emulatorCmd = "{} {} none none".format( EMULATOR_PATH, EMULATOR_OPTS )
+            subprocess.call( "sudo openvt -c 1 -s -f {} &".format( emulatorCmd ), shell=True );
 
-        #self.killEmulatorProcs()
+    def load( self, rom ):
+        if rom != self.rom:
+            self.logger.info( 'Loading rom: {}'.format( rom ) )
+            self.rom = rom
+            self.killEmulatorProcs()
 
-        #console = romFile[0:romFile.index('/')]
-        #emulatorCmd = "{} {} {} {}".format(
-        #    EMULATOR_PATH,
-        #    EMULATOR_OPTS,
-        #    console,
-        #    romFile
-        #    )
-        #self.logger.info( 'Running emulator command: {}'.format( emulatorCmd ) )
+            console = rom[0:rom.index('/')]
+            emulatorCmd = "{} {} {} {}{}".format(
+                EMULATOR_PATH,
+                EMULATOR_OPTS,
+                console,
+                ROMS_PATH,
+                rom
+                )
+            self.logger.info( 'Running emulator command: {}'.format( emulatorCmd ) )
+            subprocess.call( "sudo openvt -c 1 -s -f {} &".format( emulatorCmd ), shell=True );
+
+if __name__ == "__main__":
+    logLevel = logging.DEBUG
+    logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+    logger = log.initLogger( logLevel, logFormat )
+
+    try:
+        app = RomManager( logger )
+        app.load( sys.argv[1] )
+    except:
+        logger.error( traceback.format_exc() )
+        sys.exit(1)
 
 

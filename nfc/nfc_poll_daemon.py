@@ -6,6 +6,8 @@ import signal
 import grp
 import daemon
 from daemon import pidfile
+import log
+import logging
 import nfc_poll
 
 debug_p = True
@@ -27,18 +29,21 @@ def start_daemon( pidf, logf ):
             pidfile=pidfile.TimeoutPIDLockFile( pidf ),
             ) as context:
 
-            logger = nfc_poll.initLogger( logf )
-            logger.debug( "nfc_poll_daemon: entered daemon context" )
+            logLevel = logging.INFO
+            logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+            logger = log.initLogger( logLevel, logFormat, logf )
+            logger.info( "nfc_poll_daemon: entered daemon context" )
 
             try:
                 options = nfc_poll.initConfig( logger )
-                logger.debug( "nfc_poll_daemon: options: {}".format( options ) )
+                logger.info( "nfc_poll_daemon: options: {}".format( options ) )
 
                 app = nfc_poll.NFCPoll( options, logger )
                 context.signal_map = {
                     signal.SIGTERM: app.cleanup
                     }
-                logger.debug( "nfc_poll_daemon: running app" )
+                logger.info( "nfc_poll_daemon: running app" )
                 app.run()
             except:
                 logger.error( tracebox.format_exc() )
