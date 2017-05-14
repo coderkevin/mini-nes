@@ -33,8 +33,9 @@ class NFCPoll():
             uid = self.nfc_poll( self.options['uiPollNr'], self.options['uiPeriod'] )
 
             if uid:
-                # TODO: Do something here!
-                pass
+                gameFilePath = self.lookupCartridge( uid )
+                if gameFilePath:
+                    self.logger.info( "Read cartridge for {}".format( gameFilePath ) )
 
             time.sleep( self.options['interval'] )
 
@@ -42,6 +43,12 @@ class NFCPoll():
         self.logger.debug( "cleanup" )
         self.nfc_close()
 
+    def lookupCartridge( self, uid ):
+        cartridges = self.options['cartridges']
+        if uid in cartridges:
+            return cartridges[uid]
+        else:
+            return None
 
     def nfc_open( self ):
         res = self.libnfcutils.nfcutils_open()
