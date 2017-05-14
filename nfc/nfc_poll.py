@@ -4,8 +4,11 @@ from ctypes import *
 import sys
 import time
 import logging
+import psutil
+import subprocess
 import ConfigParser
 import traceback
+import rom_manager
 
 logLevel = logging.DEBUG
 logFormat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -18,6 +21,7 @@ class NFCPoll():
 
         self.options = options
         self.logger = logger
+        self.rom = rom_manager.RomManager()
 
         self.libnfc = CDLL("libnfc.so")
         self.libnfcutils = CDLL("libnfcutils.so")
@@ -36,6 +40,7 @@ class NFCPoll():
                 gameFilePath = self.lookupCartridge( uid )
                 if gameFilePath:
                     self.logger.info( "Read cartridge for {}".format( gameFilePath ) )
+                    self.rom.load( gameFilePath )
 
             time.sleep( self.options['interval'] )
 
@@ -79,7 +84,6 @@ class NFCPoll():
         elif res == 1:
             self.logger.debug( "NFC tag found: {0}".format( uidString.value ) )
             return uidString.value
-
 
 def initLogger( logFile = None ):
     logger = logging.getLogger( 'NFCPoll' )
