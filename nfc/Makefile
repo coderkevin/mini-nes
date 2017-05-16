@@ -53,6 +53,8 @@ install: lib
 	install -m 0755 *.py $(VAR_WORK_DIR)
 	install -m 0755 init/nfc_poll $(INIT_DIR)
 	install -m 0644 etc/*.conf -D -t $(CONFIG_DIR)
+	-systemcfg enable nfc_poll
+	-systemcfg daemon-reload
 
 clean:
 	-rm -f *.o *.so*
