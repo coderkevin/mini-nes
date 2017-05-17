@@ -11,7 +11,7 @@ install:
 	-useradd nes
 	-pip install python-daemon
 	install -m 0755 *.py -D -t $(VAR_WORK_DIR)
-	install -m 0755 init/nes_buttons $(INIT_DIR)
-	-systemcfg enable nes_buttons
-	-systemcfg daemon-reload
+	install -m 0755 init/nes_buttons -D -t $(INIT_DIR)
+	-systemctl enable nes_buttons
+	-systemctl daemon-reload
 

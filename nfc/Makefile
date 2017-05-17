@@ -49,12 +49,14 @@ test: $(TEST)
 install: lib
 	-useradd nes
 	-pip install python-daemon
-	install -m 0755 *.so* $(INSTALL_PREFIX)/lib
-	install -m 0755 *.py $(VAR_WORK_DIR)
-	install -m 0755 init/nfc_poll $(INIT_DIR)
+	-pip install psutil
+	install -m 0755 *.so* -D -t $(INSTALL_PREFIX)/lib
+	install -m 0755 *.py -D -t $(VAR_WORK_DIR)
+	install -m 0755 init/nfc_poll -D -t $(INIT_DIR)
 	install -m 0644 etc/*.conf -D -t $(CONFIG_DIR)
-	-systemcfg enable nfc_poll
-	-systemcfg daemon-reload
+	-systemctl enable nfc_poll
+	-systemctl daemon-reload
+	-systemctl start nfc_poll
 
 clean:
 	-rm -f *.o *.so*
