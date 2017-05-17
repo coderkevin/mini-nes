@@ -14,4 +14,5 @@ install:
 	install -m 0755 init/nes_buttons -D -t $(INIT_DIR)
 	-systemctl enable nes_buttons
 	-systemctl daemon-reload
+	-systemctl start nes_buttons
 
