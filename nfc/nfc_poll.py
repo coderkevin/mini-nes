@@ -37,6 +37,7 @@ class NFCPoll():
             rom = None
 
             if uid:
+                self.logger.info( "Reading NFC UID: {}".format( uid ) )
                 rom = self.lookupCartridge( uid )
 
             if rom:
