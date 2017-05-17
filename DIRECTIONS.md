@@ -87,3 +87,11 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 
 *** Known issue ***
 From here, I've got a problem currently. It doesn't seem to recognize joystick inputs for the games that are loaded this way, and pressing any key on the keyboard restarts Emulation Station. I'll continue to work on this, but if you have a solution, contact me!
+
+## Install nes_buttons
+1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
+2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
+3. `cd mini-nes/nfc`
+4. `sudo make install`
+5. Run `systemctl status nes_buttons` and ensure you see "Active: active (running)" in the output
+6. From here, you should be able to depress the power button to release it, and the LED should stay lit until the shutdown completes, then turn off. At this point, your RPi CPU is completely off. Now press the power button to latch it, and the RPi should come back up. A reset will simply send a `shutdown -r now` instead and reboot the system.
