@@ -1,6 +1,9 @@
 #!/usr/bin/env python2.7
 
 import sys
+import os
+import grp
+import pwd
 import psutil
 import subprocess
 import log
@@ -8,6 +11,7 @@ import logging
 
 ROMS_PATH = "/home/pi/RetroPie/roms/"
 EMULATOR_PATH = "/opt/retropie/supplementary/runcommand/runcommand.sh"
+DASHBOARD_PATH = "/opt/retropie/supplementary/emulationstation/emulationstation.sh"
 EMULATOR_OPTS = "0 _SYS_"
 
 class RomManager():
@@ -41,8 +45,8 @@ class RomManager():
             self.logger.info( "Clearing rom for default operation" )
             self.rom = None
             self.killEmulatorProcs()
-            emulatorCmd = "{} {} none none".format( EMULATOR_PATH, EMULATOR_OPTS )
-            subprocess.call( "sudo openvt -c 1 -s -f {} &".format( emulatorCmd ), shell=True );
+            emulatorCmd = DASHBOARD_PATH
+            subprocess.call( "sudo -u pi bash {} &".format( emulatorCmd ), shell=True );
 
     def load( self, rom ):
         if rom != self.rom:
@@ -59,7 +63,15 @@ class RomManager():
                 rom
                 )
             self.logger.debug( 'Running emulator command: {}'.format( emulatorCmd ) )
-            subprocess.call( "sudo openvt -c 1 -s -f {} &".format( emulatorCmd ), shell=True );
+
+            subprocess.call( "bash {} &".format( emulatorCmd ), shell=True, preexec_fn=demote( 'pi', 'pi' ) );
+
+def demote( user, group ):
+    def set_ids():
+        os.setgid( grp.getgrnam( group ).gr_gid )
+        os.setuid( pwd.getpwnam( user ).pw_uid )
+
+    return set_ids
 
 if __name__ == "__main__":
     logLevel = logging.DEBUG

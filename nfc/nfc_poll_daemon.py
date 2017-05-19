@@ -24,7 +24,7 @@ def start_daemon( pidf, logf ):
     try:
         with daemon.DaemonContext(
             working_directory='/var/lib/nfc_poll',
-            gid = grp.getgrnam( 'nes' ).gr_gid,
+            gid = grp.getgrnam( 'pi' ).gr_gid,
             umask=0o002,
             pidfile=pidfile.TimeoutPIDLockFile( pidf ),
             ) as context:
