@@ -45,8 +45,8 @@ class RomManager():
             self.logger.info( "Clearing rom for default operation" )
             self.rom = None
             self.killEmulatorProcs()
-            emulatorCmd = DASHBOARD_PATH
-            subprocess.call( "sudo -u pi bash {} &".format( emulatorCmd ), shell=True );
+            #emulatorCmd = DASHBOARD_PATH
+            #subprocess.call( "sudo -u pi {} &".format( emulatorCmd ), shell=True );
 
     def load( self, rom ):
         if rom != self.rom:
@@ -55,7 +55,7 @@ class RomManager():
             self.killEmulatorProcs()
 
             console = rom[0:rom.index('/')]
-            emulatorCmd = "{} {} {} {}{}".format(
+            emulatorCmd = "{} {} {} '{}{}'".format(
                 EMULATOR_PATH,
                 EMULATOR_OPTS,
                 console,
@@ -64,14 +64,7 @@ class RomManager():
                 )
             self.logger.debug( 'Running emulator command: {}'.format( emulatorCmd ) )
 
-            subprocess.call( "bash {} &".format( emulatorCmd ), shell=True, preexec_fn=demote( 'pi', 'pi' ) );
-
-def demote( user, group ):
-    def set_ids():
-        os.setgid( grp.getgrnam( group ).gr_gid )
-        os.setuid( pwd.getpwnam( user ).pw_uid )
-
-    return set_ids
+            subprocess.call( "sudo -u pi {}".format( emulatorCmd ), shell=True);
 
 if __name__ == "__main__":
     logLevel = logging.DEBUG
