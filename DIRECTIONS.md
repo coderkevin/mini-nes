@@ -3,7 +3,7 @@
 ## Prerequisites
 
 1. Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
-2. `sudo apt-get install python-pip`
+2. `sudo apt-get install python-dev python-pip`
 
 ## Enable i2c device
 1. `sudo mkdir /etc/nfc`

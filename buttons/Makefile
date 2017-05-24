@@ -8,7 +8,6 @@ INIT_DIR := /etc/init.d
 .PHONY: install
 
 install:
-	-apt-get install python-dev
 	-pip install python-daemon
 	install -m 0755 *.py -D -t $(VAR_WORK_DIR)
 	install -m 0755 init/nes_buttons -D -t $(INIT_DIR)
