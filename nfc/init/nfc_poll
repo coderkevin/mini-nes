@@ -4,7 +4,7 @@
 #
 # config: /etc/nfc_poll/nfc_poll.conf
 # pidfile: /var/run/nfc_poll.pid
-# logfile: /var/log/nfc_poll.log
+# logfile: /dev/shm/nfc_poll.log
 #
 ### BEGIN INIT INFO
 # Provides: nfc_poll_daemon
@@ -22,7 +22,7 @@
 nfc_poll_daemon=/var/lib/nfc_poll/nfc_poll_daemon.py
 prog=nfc_poll_daemon
 pidfile=/var/run/nfc_poll.pid
-logfile=/var/log/nfc_poll.log
+logfile=/dev/shm/nfc_poll.log
 RETVAL=0
 
 NFC_POLL_OPTS="-p $pidfile -l $logfile"

@@ -50,7 +50,7 @@ def start_daemon( pidf, logf ):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser( description="NES Buttons Daemon" )
     parser.add_argument( '-p', '--pid-file', default='/var/run/nes_buttons.pid' )
-    parser.add_argument( '-l', '--log-file', default='/var/run/nes_buttons.log' )
+    parser.add_argument( '-l', '--log-file', default='/dev/shm/nes_buttons.log' )
 
     args = parser.parse_args()
 

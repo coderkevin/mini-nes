@@ -4,7 +4,7 @@
 #
 # config: /etc/nes_buttons/nes_buttons.conf
 # pidfile: /var/run/nes_buttons.pid
-# logfile: /var/log/nes_buttons.log
+# logfile: /dev/shm/nes_buttons.log
 #
 ### BEGIN INIT INFO
 # Provides: nes_buttons_daemon
@@ -22,7 +22,7 @@
 nes_buttons_daemon=/var/lib/nes_buttons/nes_buttons_daemon.py
 prog=nes_buttons_daemon
 pidfile=/var/run/nes_buttons.pid
-logfile=/var/log/nes_buttons.log
+logfile=/dev/shm/nes_buttons.log
 RETVAL=0
 
 NES_BUTTONS_OPTS="-p $pidfile -l $logfile"

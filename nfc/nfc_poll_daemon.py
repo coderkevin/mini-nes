@@ -57,7 +57,7 @@ def start_daemon( pidf, logf ):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser( description="NFC Poll Daemon" )
     parser.add_argument( '-p', '--pid-file', default='/var/run/nfc_poll.pid' )
-    parser.add_argument( '-l', '--log-file', default='/var/log/nfc_poll.log' )
+    parser.add_argument( '-l', '--log-file', default='/dev/shm/nfc_poll.log' )
 
     args = parser.parse_args()
 
