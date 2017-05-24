@@ -47,6 +47,7 @@ test: $(TEST)
 	LD_LIBRARY_PATH=. ./$(TEST) -v
 
 install: lib
+	-apt-get install python-dev
 	-pip install python-daemon
 	-pip install psutil
 	install -m 0755 *.so* -D -t $(INSTALL_PREFIX)/lib

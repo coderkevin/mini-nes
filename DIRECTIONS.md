@@ -18,7 +18,7 @@
 1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
 2. `wget -O libnfc-1.7.1.tar.bz2 https://bintray.com/nfc-tools/sources/download_file?file_path=libnfc-1.7.1.tar.bz2`
 3. `tar -xvf libnfc-1.7.1.tar.bz2`
-4. `cd libnfc-1.71`
+4. `cd libnfc-1.7.1`
 5. `./configure --prefix=/usr --sysconfdir=/etc --with-drivers=pn532_i2c`
 6. `make`
 7. `sudo make install`
@@ -91,7 +91,15 @@ From here, I've got a problem currently. It doesn't seem to recognize joystick i
 ## Install nes_buttons
 1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
 2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
-3. `cd mini-nes/nfc`
+3. `cd mini-nes/buttons`
 4. `sudo make install`
 5. Run `systemctl status nes_buttons` and ensure you see "Active: active (running)" in the output
 6. From here, you should be able to depress the power button to release it, and the LED should stay lit until the shutdown completes, then turn off. At this point, your RPi CPU is completely off. Now press the power button to latch it, and the RPi should come back up. A reset will simply send a `shutdown -r now` instead and reboot the system.
+
+## Install screen_manager
+1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
+2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
+3. `cd mini-nes/screen`
+4. `sudo make install`
+5. Restart your Pi (try the reset button!) and if you've done all the steps above, everything should be working!
+

@@ -61,7 +61,5 @@ Log level can be modified by editing the script itself (at `/var/lib/screen_mana
 
 # Known Limitations
 
-- The default console is visible while the action is loading.
-
 - If after running an action, the process exits, no further action will be taken by this script. The most likely scenario for this is exiting RetroArch by hitting `[select]+[start]` In that case, the user will see the console and a different action must be run.
 
