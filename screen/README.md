@@ -8,23 +8,26 @@ way of starting roms or emulationstation.
 
 After cloning the repo, simply cd to this directory and run `sudo make install`.
 This will copy the script to `/var/lib/screen_manager` and embed it into the
-RetroPie autostart script. (`/opt/retropie/config/all/autostart.sh')
+RetroPie autostart script. (`/opt/retropie/config/all/autostart.sh`)
 
 # Operation
 
-On startup, this script will be run instead of emulationstation itself, however
-its default operation is to run emulationstation, so the first time you run it,
-it will run the same as before.
+On startup, the `screen_manager.py` script will be run instead of `emulationstation`.
+However, default action is to run `emulationstation`, so if you have no config file,
+it will look the same as before.
 
 ## Configuration File
 
-The key to this script is the configuration file at `/dev/shm/screen_manager.cfg`
-The `screen_manager.py` script actively watches this file, so as soon as the file
-is written, the script will respond and run the action.
+This script looks for a configuration file at `/dev/shm/screen_manager.cfg`
 
-This is designed to work with other system processes such as:
-  - A system daemon that monitors GPIOs for button presses, then starts a rom.
-  - An nfc reader that watches for a tag and starts a rom, then runs the dashboard after the tag leaves.
+The `screen_manager.py` script actively watches this file, so as soon as the file
+is written, the script will respond and run the action. If the parsing of the file
+ends up with an identical action as before, the action will be ignored. (so it's
+okay to write the same action to it multiple times.)
+
+This script and configuration file is designed to work with other system processes such as:
+  - A daemon that monitors GPIOs for button presses, then starts a rom.
+  - An nfc reader daemon that watches for a tag and starts a rom, then runs the dashboard after the tag is removed.
 
 All you have to do is handle your input the way you need to, and then write the
 config file in response.
@@ -50,4 +53,15 @@ type=rom
 system=<console name (e.g. nes)>
 path=<absolute path to rom (e.g. /home/pi/RetroPie/roms/nes/myrom.zip)>
 ```
+
+# Logging
+
+A log for the script is kept at `/dev/shm/screen_manager.log`
+Log level can be modified by editing the script itself (at `/var/lib/screen_manager/screen_manager.py`)
+
+# Known Limitations
+
+- The default console is visible while the action is loading.
+
+- If after running an action, the process exits, no further action will be taken by this script. The most likely scenario for this is exiting RetroArch by hitting `[select]+[start]` In that case, the user will see the console and a different action must be run.
 
