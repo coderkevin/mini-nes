@@ -28,6 +28,7 @@ def run_rom( options ):
         system = options[ 'system' ]
         path = options[ 'path' ]
 
+        # Use runcommand to load the rom, then ES after it exits
         logger.info( 'Running rom: {}'.format( path ) )
         cmd = "{} 0 _SYS_ {} '{}'".format( RUNCOMMAND, system, path )
         return cmd
@@ -90,7 +91,6 @@ class ScreenManager():
                 action[ name ] = config.get( 'Action', name )
 
         if action != self.lastAction:
-            logger.debug( "Action: {}".format( action ) );
             self.run_action( action )
         else:
             logger.debug( "Action is same as last action. Ignoring." );
@@ -106,14 +106,18 @@ class ScreenManager():
             cmd = actionFunc( action )
 
             if cmd:
-                if self.process:
-                    terminate_process( self.process )
-
-                logger.debug( "Running command: {}".format( cmd ) );
-                self.process = subprocess.Popen( shlex.split( cmd ) )
+                self.run_cmd( cmd )
 
         else:
             logger.error( "Action '{}' not recognized.".format( action[ 'type' ] ) )
+
+    def run_cmd( self, cmd ):
+        if self.process:
+            terminate_process( self.process )
+
+        logger.debug( "Running command: {}".format( cmd ) );
+        self.process = subprocess.Popen( shlex.split( cmd ) )
+        # TODO: Do something if the user exits the process ( like using select+start in RetroArch )
 
     def start( self ):
         self.read_config()
