@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 
 from ctypes import *
+import os
 import sys
 import time
 import psutil
@@ -9,8 +10,6 @@ import ConfigParser
 import traceback
 import log
 import logging
-import rom_manager
-
 
 configDir = '/etc/nfc_poll/'
 defaultConfigFile = configDir + 'nfc_poll.conf'
@@ -20,7 +19,7 @@ class NFCPoll():
 
         self.options = options
         self.logger = logger
-        self.rom = rom_manager.RomManager( logger )
+        self.rom = None
 
         self.libnfc = CDLL("libnfc.so")
         self.libnfcutils = CDLL("libnfcutils.so")
@@ -41,11 +40,42 @@ class NFCPoll():
                 rom = self.lookupCartridge( uid )
 
             if rom:
-                self.rom.load( rom )
+                self.loadRom( rom )
             else:
-                self.rom.clear()
+                self.clearRom()
 
             time.sleep( self.options['interval'] )
+
+    def loadRom( self, rom ):
+        if self.rom != rom:
+            self.rom = rom
+            system = rom[0:rom.index('/')]
+            path = os.path.join( self.options['romsHome'], rom )
+
+            self.writeScreenConfig( [
+                "# Action set by nfc_poll",
+                "",
+                "[Action]",
+                "type=rom",
+                "system={}".format( system ),
+                "path={}".format( path ),
+            ] )
+
+    def clearRom( self ):
+        if self.rom:
+            self.rom = None
+
+            self.writeScreenConfig( [
+                "# Action set by nfc_poll",
+                "",
+                "[Action]",
+                "type=dashboard",
+            ] )
+
+    def writeScreenConfig( self, lines ):
+        with open( self.options['screenConfig'], 'wt' ) as f:
+            for line in lines:
+                f.write( "{}\n".format( line ) )
 
     def cleanup( self ):
         self.logger.debug( "cleanup" )
@@ -99,6 +129,8 @@ def initConfig( logger, configFile = defaultConfigFile ):
         cartridges[ uid ] = config.get( 'Cartridges', uid )
 
     return {
+        'romsHome': config.get( 'Settings', 'roms_home' ),
+        'screenConfig': config.get( 'Settings', 'screen_config_file' ),
         'interval': config.getint( 'Settings', 'interval_seconds' ),
         'uiPollNr': config.getint( 'Settings', 'ui_poll_nr' ),
         'uiPeriod': config.getint( 'Settings', 'ui_period' ),
