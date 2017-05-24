@@ -85,9 +85,6 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 4. `sudo systemctl restart nfc_poll`
 5. Try it out! Place one of your cartridges on the reader and the screen should go black for a couple seconds, then bring up your game. Remove it and it should go back to the dashboard.
 
-*** Known issue ***
-From here, I've got a problem currently. It doesn't seem to recognize joystick inputs for the games that are loaded this way, and pressing any key on the keyboard restarts Emulation Station. I'll continue to work on this, but if you have a solution, contact me!
-
 ## Install nes_buttons
 1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
 2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
