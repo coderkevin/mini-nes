@@ -75,7 +75,8 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 ### Record your desired games
 1. `cd ~/RetroPie/roms`
 2. Start typing `ls <system>/<name of game>` (e.g. `ls nes/Super`) to find the rom you want. Hit tab to complete the file, or hit tab twice to show possible matches. Don't forget to backslash things like spaces and parenthesis as you go.
-3. After you finally tab through to the complete file, copy the file name (backslashes and all) and put it next to the UID you want to use in your text file. (`e.g. nes/Super\ Mario\ Bros.\ \(JU\)\ \[\!\].zip`)
+3. After you finally tab through to the complete file, hit <enter>.
+4. Copy the resulting line and put it and put it next to the UID you want to use in your text file. (`e.g. nes/Super Mario Bros. (JU) [!].zip`) Make sure you don't have backslashes here.
 5. Repeat this process
 
 ### Write your cartridges in the config
