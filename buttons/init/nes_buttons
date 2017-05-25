@@ -27,8 +27,6 @@ RETVAL=0
 
 NES_BUTTONS_OPTS="-p $pidfile -l $logfile"
 
-RUNASUSER=nes
-
 case "$1" in
 	start)
 		log_daemon_msg "Starting $prog: "
