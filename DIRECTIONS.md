@@ -71,6 +71,7 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 2. Place a cartridge (NFC tag) over the reader, the log should output "Reading NFC UID: 00000000000000" where the zeroes are the UID of the tag.
 3. Copy/paste the UID into a text file.
 4. Continue with all tags you wish to use.
+5. To exit the log, hit \<Ctrl\>-C
 
 ### Record your desired games
 1. `cd ~/RetroPie/roms`
@@ -82,7 +83,7 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 ### Write your cartridges in the config
 1. `sudo nano /etc/nfc_poll/nfc_poll.conf`
 2. At the bottom of the file, there's a `[Cartridges]` section.
-3. For each cartridge you want, add a line in this format: `<uid> = <game file>` (e.g. `00000000000000 = nes/Super\ Mario\ Bros.\ \(JU\)\ \[\!\].zip`)
+3. For each cartridge you want, add a line in this format: `<uid> = <game file>` (e.g. `00000000000000 = nes/Super Mario Bros. (JU) [!].zip`)
 4. `sudo systemctl restart nfc_poll`
 5. Try it out! Place one of your cartridges on the reader and the screen should go black for a couple seconds, then bring up your game. Remove it and it should go back to the dashboard.
 
