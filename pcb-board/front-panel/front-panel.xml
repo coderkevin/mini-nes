@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>C:/Users/mafe7/Documents/GitHub/mini-nes/pcb-board/front-panel/front-panel.sch</source>
+    <date>6/18/2017 4:34:39 AM</date>
+    <tool>Eeschema 4.0.6</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>Mini-NES_NFC_FRONT-PANEL by @coderkevin</title>
+        <company>Eladio Martinez</company>
+        <rev>1.0</rev>
+        <date>2017-05-18</date>
+        <source>front-panel.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="J1">
+      <value>FRONT_CONN</value>
+      <footprint>Pin_Headers:Pin_Header_Straight_1x05_Pitch2.54mm</footprint>
+      <libsource lib="conn" part="CONN_01X05"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>591E5B6A</tstamp>
+    </comp>
+    <comp ref="D1">
+      <value>LED</value>
+      <footprint>LEDs:LED_D3.0mm</footprint>
+      <libsource lib="device" part="LED"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>591E600E</tstamp>
+    </comp>
+    <comp ref="R1">
+      <value>220h</value>
+      <footprint>Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal</footprint>
+      <libsource lib="device" part="R"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>591F3340</tstamp>
+    </comp>
+    <comp ref="SW1">
+      <value>TL2230OA</value>
+      <footprint>e-switch:TL2230</footprint>
+      <libsource lib="e-switch" part="TL2230OA"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>591F3F8D</tstamp>
+    </comp>
+    <comp ref="SW2">
+      <value>TL2230EE</value>
+      <footprint>e-switch:TL2230</footprint>
+      <libsource lib="e-switch" part="TL2230EE"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>591F4014</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="conn" part="CONN_01X05">
+      <description>Connector, single row, 01x05, pin header</description>
+      <footprints>
+        <fp>Pin_Header_Straight_1X*</fp>
+        <fp>Pin_Header_Angled_1X*</fp>
+        <fp>Socket_Strip_Straight_1X*</fp>
+        <fp>Socket_Strip_Angled_1X*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">CONN_01X05</field>
+      </fields>
+      <pins>
+        <pin num="1" name="P1" type="passive"/>
+        <pin num="2" name="P2" type="passive"/>
+        <pin num="3" name="P3" type="passive"/>
+        <pin num="4" name="P4" type="passive"/>
+        <pin num="5" name="P5" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="device" part="LED">
+      <description>LED generic</description>
+      <footprints>
+        <fp>LED*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="device" part="R">
+      <description>Resistor</description>
+      <footprints>
+        <fp>R_*</fp>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="e-switch" part="TL2230EE">
+      <description>Switch, dual Latching Type DPDT Mini Push Button, 6Pins Square 7mmx7mm</description>
+      <docs>C:/Users/mafe7/Documents/KiCad/MyLibrary/data_sheet/TL2230EE_datasheet.pdf</docs>
+      <footprints>
+        <fp>DPDT*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">TL2230EE</field>
+      </fields>
+      <pins>
+        <pin num="1" name="A" type="passive"/>
+        <pin num="2" name="B" type="passive"/>
+        <pin num="3" name="C" type="passive"/>
+        <pin num="4" name="A" type="passive"/>
+        <pin num="5" name="B" type="passive"/>
+        <pin num="6" name="C" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="e-switch" part="TL2230OA">
+      <description>Switch, dual Momentary Type DPDT Mini Push Button, 6Pins Square 7mmx7mm</description>
+      <docs>C:/Users/mafe7/Documents/KiCad/MyLibrary/data_sheet/TL2230OA_datasheet.pdf</docs>
+      <footprints>
+        <fp>DPDT*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">TL2230OA</field>
+      </fields>
+      <pins>
+        <pin num="1" name="A" type="passive"/>
+        <pin num="2" name="B" type="passive"/>
+        <pin num="3" name="C" type="passive"/>
+        <pin num="4" name="A" type="passive"/>
+        <pin num="5" name="B" type="passive"/>
+        <pin num="6" name="C" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="e-switch">
+      <uri>C:\Users\mafe7\Documents\KiCad\MyLibrary\library\e-switch.lib</uri>
+    </library>
+    <library logical="conn">
+      <uri>C:\Program Files\KiCad\share\kicad\library\conn.lib</uri>
+    </library>
+    <library logical="device">
+      <uri>C:\Program Files\KiCad\share\kicad\library\device.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="/VCC">
+      <node ref="SW2" pin="6"/>
+      <node ref="SW2" pin="3"/>
+      <node ref="J1" pin="2"/>
+      <node ref="SW1" pin="3"/>
+    </net>
+    <net code="2" name="Net-(SW2-Pad4)">
+      <node ref="SW2" pin="4"/>
+    </net>
+    <net code="3" name="Net-(D1-Pad1)">
+      <node ref="D1" pin="1"/>
+      <node ref="R1" pin="1"/>
+    </net>
+    <net code="4" name="/GND">
+      <node ref="J1" pin="1"/>
+      <node ref="R1" pin="2"/>
+      <node ref="SW1" pin="1"/>
+      <node ref="SW2" pin="1"/>
+    </net>
+    <net code="5" name="/LED">
+      <node ref="SW2" pin="5"/>
+      <node ref="D1" pin="2"/>
+      <node ref="J1" pin="3"/>
+    </net>
+    <net code="6" name="/PWR">
+      <node ref="J1" pin="4"/>
+      <node ref="SW2" pin="2"/>
+    </net>
+    <net code="7" name="/RST">
+      <node ref="J1" pin="5"/>
+      <node ref="SW1" pin="2"/>
+    </net>
+  </nets>
+</export>
