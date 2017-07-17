@@ -67,7 +67,7 @@ device.connstring = "pn532_i2c:/dev/i2c-1"
 In this system, the cartridges don't need to be written to, we configure a mapping to their UIDs, which should already be uniquely pre-programmed to each tag.
 
 ### Record your NFC tag UIDs
-1. Run `tail -f /var/log/nfc_poll.log`
+1. Run `tail -f /dev/shm/nfc_poll.log`
 2. Place a cartridge (NFC tag) over the reader, the log should output "Reading NFC UID: 00000000000000" where the zeroes are the UID of the tag.
 3. Copy/paste the UID into a text file.
 4. Continue with all tags you wish to use.
