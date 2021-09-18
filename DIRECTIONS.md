@@ -4,6 +4,7 @@
 
 1. Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
 2. `sudo apt-get install python-dev python-pip`
+3. `sudo pip install python-daemon==2.2.4` (this is necessary to fix an issue with the latest release of python-daemon)
 
 ## Enable i2c device
 1. `sudo mkdir /etc/nfc`
