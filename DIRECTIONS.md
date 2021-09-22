@@ -1,4 +1,4 @@
-# Mini NES Setup
+# NES NFC Reader Setup
 
 ## Step 1 - Prerequisites
 
