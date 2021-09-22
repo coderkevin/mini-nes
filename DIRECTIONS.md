@@ -91,11 +91,12 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 
 ## Setup Autostart ##
 1. `sudo nano /etc/rc.local`
-2. Scroll down to `exit 0` and press enter twice then copy:
+2. Scroll down to `exit 0` and press enter twice then copy above the `exit 0` Line
 ```
 sudo systemctl start nfc_poll
 sudo systemctl start nes_buttons
 ```
+It should look something like this: http://www.piwizardgaming.com/nfc/rclocal.png 
 ## Finish Up ##
 1. `sudo shutdown -r now`
 2.  Try placing a cartridge on the reader
