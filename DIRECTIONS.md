@@ -81,32 +81,26 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 1. `sudo nano /etc/nfc_poll/nfc_poll.conf`
 2. At the bottom of the file, there's a `[Cartridges]` section.
 3. For each cartridge you want, add a line in this format: `<uid> = <game file>` (e.g. `00000000000000 = nes/Super Mario Bros. (JU) [!].zip`)
-4. `sudo systemctl restart nfc_poll`
-5. Try it out! Place one of your cartridges on the reader and the screen should go black for a couple seconds, then bring up your game. Remove it and it should go back to the dashboard.
 
-## Install nes_buttons
-1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
-2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
-3. `cd mini-nes/buttons`
-4. `sudo make install`
-5. Run `systemctl status nes_buttons` and ensure you see "Active: active (running)" in the output
-6. From here, you should be able to depress the power button to release it, and the LED should stay lit until the shutdown completes, then turn off. At this point, your RPi CPU is completely off. Now press the power button to latch it, and the RPi should come back up. A reset will simply send a `shutdown -r now` instead and reboot the system.
-
-## Install screen_manager
-1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
-2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
-3. `cd mini-nes/screen`
-4. `sudo make install`
-
-## Setup Autostart ##
+## Setup Autostart
 1. `sudo nano /etc/rc.local`
 2. Scroll down to `exit 0` and press enter twice then copy above the `exit 0` Line
 ```
 sudo systemctl start nfc_poll
 sudo systemctl start nes_buttons
 ```
-It should look something like this: http://www.piwizardgaming.com/nfc/rclocal.png 
-## Finish Up ##
-1. `sudo shutdown -r now`
-2.  Try placing a cartridge on the reader
+It should look something like this:<br>
+![alt text](http://www.piwizardgaming.com/nfc/rclocal.png) 
+ 
+## Install screen_manager
+1.  Type `cd mini-nes/screen`
+2.  Type `sudo make install`
   
+## Install nes_buttons
+1.  Type `cd /home/pi` 
+2.  Type `cd mini-nes/buttons`
+3.  Type `sudo make install`
+
+## Finish Up ##
+1.  Type `sudo shutdown -r now`
+2.  Once RetroPie Reboots - Try placing a cartridge on the reader
