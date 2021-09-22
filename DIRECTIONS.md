@@ -8,48 +8,49 @@
 4. Select `P2 SSH` Then select `Yes` to Enable it.  then exit out back to the main menu screen
 5. Download Putty On your computer  (https://www.putty.org/)
 6. Once installed SSH Into your PI : `Hostname = retropie` Click Open and then `username = pi` `password = raspberry` *Note* It will not display the password as you type it.
-7.Type `python --version` Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
-8. Type `sudo apt update -y`
-9. `sudo apt upgrade -y`
-10. `sudo apt-get install python-dev -y`
-11. `sudo apt-get install pyton-pip -y`
-12. `pip --version` Ensure pip is installed and working
-13. `sudo pip install python-daemon==2.2.4` 
+7.  Type `python --version` Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
+8.  Type `sudo apt update -y`
+9.  Type `sudo apt upgrade -y`
+10. Type `sudo apt-get install python-dev -y`
+11. Type `sudo apt-get install pyton-pip -y`
+12. Type `pip --version` Ensure pip is installed and working (*pip 18.1 from /usr/lib/python2.7/dist-packages/pip (python 2.7)*)
+13. Type `sudo pip install python-daemon==2.2.4` 
 
 ## Enable i2c device
-1. `sudo mkdir /etc/nfc`
-2. `sudo raspi-config`
-3. Select "3 Interfacing"
-4. Select "P5 I2C"
+1.  Type `sudo mkdir /etc/nfc`
+2.  Type `sudo raspi-config`
+3. Select `3 Interfacing`
+4. Select `P5 I2C`
 5. Select "\<Yes\>"
 6. Exit `raspi-config` program
-7. `sudo shutdown -r now` to reboot with i2c enabled.
+7.  Type `sudo shutdown -r now` to reboot with i2c enabled.
 
 ## Install libnfc
-1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
-2. `wget -O libnfc-1.7.1.tar.bz2 https://piwizardgaming.com/nfc/libnfc-1.7.1.tar.bz2`
-3. `tar -xvf libnfc-1.7.1.tar.bz2`
-4. `cd libnfc-1.7.1`
-5. `./configure --prefix=/usr --sysconfdir=/etc --with-drivers=pn532_i2c`
-6. `make`
-7. `sudo make install`
-8. `sudo shutdown -r now`
-9. After reboot, type `lsmod | grep i2c` and ensure that you see an `i2c_dev` in the list.
-10. Also, type `ls /dev/i2c*` and ensure that `/dev/i2c-1` is returned.
+1. Re-open putty and SSH back into your PI
+2. Ensure you are logged in as `pi` and in the `/home/pi` directory.
+3.  Type `wget -O libnfc-1.7.1.tar.bz2 https://piwizardgaming.com/nfc/libnfc-1.7.1.tar.bz2`
+3.  Type `tar -xvf libnfc-1.7.1.tar.bz2`
+4.  Type `cd libnfc-1.7.1`
+5.  Type `./configure --prefix=/usr --sysconfdir=/etc --with-drivers=pn532_i2c`
+6.  Type `make`
+7.  Type `sudo make install`
+8.  Type `sudo shutdown -r now`
+9. After reboot, re-open putty and SSH back into the PI and type `lsmod | grep i2c` and ensure that you see an `i2c_dev` in the list.
+10.Then type `ls /dev/i2c*` and ensure that `/dev/i2c-1` is returned.
 
 ## Configure libnfc
-1. `cd /etc/nfc`
-2. `sudo wget http://piwizardgaming.com/nfc/libnfc.conf`
-3. Run `nfc-poll` and ensure you see `NFC reader: pn532_i2c:/dev/i2c-1 opened`
+1. Type`cd /etc/nfc`
+2. Type`sudo wget http://piwizardgaming.com/nfc/libnfc.conf`
+3. Type `nfc-poll` and ensure you see `NFC reader: pn532_i2c:/dev/i2c-1 opened`
 4. Try reading a tag, use Ctrl-C to stop or just wait 30 seconds
 
 ## Install nfc_poll
-1. Ensure you are logged in as `pi` and in the `/home/pi` directory.
-2. `export NFC_HOME=/home/pi/libnfc-1.7.1`
-3. `git clone https://github.com/coderkevin/mini-nes.git`
-4. `cd mini-nes/nfc`
-5. `make`
-6. `sudo make install`
+1. Type `cd /home/pi`
+2. Type `export NFC_HOME=/home/pi/libnfc-1.7.1`
+3. Type `git clone https://github.com/thepiwizard/mini-nes.git`
+4. Type `cd mini-nes/nfc`
+5. Type `make`
+6. Type `sudo make install`
 7. Run `systemctl status nfc_poll` and ensure you see "Active: active (running)" in the output
 
 ## Configure your cartridges
