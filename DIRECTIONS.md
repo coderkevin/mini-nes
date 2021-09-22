@@ -53,7 +53,7 @@
 4. Type `cd mini-nes/nfc`
 5. Type `make`
 6. Type `sudo make install`
-7. Run `systemctl status nfc_poll` and ensure you see "Active: active (running)" in the output
+7. Type `systemctl status nfc_poll` and ensure you see "Active: active (running)" in the output
 
 ## Step 6 - Configure your cartridges
 
