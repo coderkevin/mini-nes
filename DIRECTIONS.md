@@ -60,7 +60,7 @@
 In this system, the cartridges don't need to be written to, we configure a mapping to their UIDs, which should already be uniquely pre-programmed to each tag.
 
 ### Step 7 - Record your NFC tag UIDs
-1. Run `tail -f /dev/shm/nfc_poll.log`
+1.  Type `tail -f /dev/shm/nfc_poll.log`
 2. Place a cartridge (NFC tag) over the reader, the log should output "Reading NFC UID: 00000000000000" where the zeroes are the UID of the tag.
 3. Copy/paste the UID into a text file.
 4. Continue with all tags you wish to use.
@@ -75,7 +75,7 @@ In this system, the cartridges don't need to be written to, we configure a mappi
   
 ### Step 9 - Game Download Demo ###
 1. `cd ~/RetroPie/roms/nes`
-2. `wget http://piwizardgaming.com/nfc/1942.zip`
+2. `wget http://piwizardgaming.com/nfc/zelda.zip`
 
 ### Step 10 - Write your cartridges in the config
 1. `sudo nano /etc/nfc_poll/nfc_poll.conf`
