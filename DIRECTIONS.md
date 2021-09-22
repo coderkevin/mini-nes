@@ -9,10 +9,10 @@
 5. Download Putty On your computer  (https://www.putty.org/)
 6. Once installed SSH Into your PI : `Hostname = retropie` Click Open and then `username = pi` `password = raspberry` *Note* It will not display the password as you type it.
 7.  Type `python --version` Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
-8.  Type `sudo apt update -y`
-9.  Type `sudo apt upgrade -y`
-10. Type `sudo apt-get install python-dev -y`
-11. Type `sudo apt-get install pyton-pip -y`
+8.  Type `sudo apt update`
+9.  Type `sudo apt upgrade`
+10. Type `sudo apt install python-dev`
+11. Type `sudo apt install pyton-pip`
 12. Type `pip --version` Ensure pip is installed and working (*pip 18.1 from /usr/lib/python2.7/dist-packages/pip (python 2.7)*)
 13. Type `sudo pip install python-daemon==2.2.4` 
 
