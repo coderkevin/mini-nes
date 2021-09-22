@@ -88,5 +88,15 @@ In this system, the cartridges don't need to be written to, we configure a mappi
 2. (If you haven't already) `git clone https://github.com/coderkevin/mini-nes.git`
 3. `cd mini-nes/screen`
 4. `sudo make install`
-5. Restart your Pi (try the reset button!) and if you've done all the steps above, everything should be working!
 
+## Setup Autostart ##
+1. `sudo nano /etc/rc.local`
+2. Scroll down to `exit 0` and press enter twice then copy:
+```
+sudo systemctl start nfc_poll
+sudo systemctl start nes_buttons
+```
+## Finish Up ##
+1. `sudo shutdown -r now`
+2.  Try placing a cartridge on the reader
+  
