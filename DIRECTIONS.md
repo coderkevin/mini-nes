@@ -2,13 +2,19 @@
 
 ## Prerequisites
 
-1. `python --version` Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
-2. `sudo apt update`
-3. `sudo apt upgrade`
-4. `sudo apt-get install python-dev`
-5. `sudo apt-get install pyton-pip`
-6. `pip --version` Ensure pip is installed and working
-7. `sudo pip install python-daemon==2.2.4` 
+1. Download and flash a copy of RetroPie (https://retropie.org.uk/download/) to your SD card And setup your controller.
+2. Open the RetroPie menu and then open Raspi-Config
+3. Select option `3 Interface Options`
+4. Select `P2 SSH` Then select `Yes` to Enable it.  then exit out back to the main menu screen
+5. Download Putty On your computer  (https://www.putty.org/)
+6. Once installed SSH Into your PI : `Hostname = retropie` Click Open and then `username = pi` `password = raspberry` *Note* It will not display the password as you type it.
+7.Type `python --version` Ensure Python 2.7 is working correctly and installed in `/usr/bin/python2.7`
+8. Type `sudo apt update -y`
+9. `sudo apt upgrade -y`
+10. `sudo apt-get install python-dev -y`
+11. `sudo apt-get install pyton-pip -y`
+12. `pip --version` Ensure pip is installed and working
+13. `sudo pip install python-daemon==2.2.4` 
 
 ## Enable i2c device
 1. `sudo mkdir /etc/nfc`
