@@ -1,4 +1,4 @@
-# NES NFC Reader Parts List
+# NFC Reader Parts List
 
 1. Raspberry Pi 3 B+ (B Plus) with Premium Clear Case and 2.5A Power Supply - Amazon $79.99 - <br>https://www.amazon.com/CanaKit-Raspberry-Premium-Clear-Supply/dp/B07BC7BMHY/<br>
 ![alt text](http://piwizardgaming.com/nfc/pi3b-plus.png)<br><br>
