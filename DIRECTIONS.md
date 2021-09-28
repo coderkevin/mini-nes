@@ -12,7 +12,7 @@
 8.  Type `sudo apt update`
 9.  Type `sudo apt upgrade`
 10. Type `sudo apt install python-dev`
-11. Type `sudo apt install pyton-pip`
+11. Type `sudo apt install python-pip`
 12. Type `pip --version` Ensure pip is installed and working (*pip 18.1 from /usr/lib/python2.7/dist-packages/pip (python 2.7)*)
 13. Type `sudo pip install python-daemon==2.2.4` 
 14. Type `python -m pip install -U pip`
