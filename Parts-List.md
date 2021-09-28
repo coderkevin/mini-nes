@@ -8,7 +8,8 @@
 ![alt text](http://piwizardgaming.com/nfc/nfc-reader-small.png)<br><br>
 4. NFC Tags   - Amazon $6.66(12qty) $10.99(30qty) - <br>https://www.amazon.com/gp/product/B08NPYD99G/<br>
 ![alt text](http://piwizardgaming.com/nfc/nfc-tag.png)<br>
-5. Push Buttons for Power & Reset - Amazon $6.88 - <br>https://www.amazon.com/QMseller-Through-Self-Locking-Mounting-Switches/dp/B07W887PZV/<br>
+5. Push Buttons for Power & Reset - Amazon $6.88 -<br>
+You can remove the small metal pin inside the button to become both the Power & Reset Buttons <br>https://www.amazon.com/QMseller-Through-Self-Locking-Mounting-Switches/dp/B07W887PZV/<br>
 ![alt text](http://piwizardgaming.com/nfc/buttons-small.png)<br><br>
 6. Latching Button for the Cartridge - Amazon $12.99 - <br>https://www.amazon.com/gp/product/B0169B5468/<br>
 ![alt text](http://piwizardgaming.com/nfc/latch.png)<br>
